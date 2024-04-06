@@ -6,6 +6,7 @@ import { GlobalStyles, createTheme, ThemeProvider } from '@mui/material';
 import axios from 'axios';
 import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
+import cheerio from "cheerio";
 const { pipeline } = require('@xenova/transformers');
 // const parse = require('url-parse');
 
@@ -52,23 +53,83 @@ function App() {
   const[textin, setInputText] = useState("");
   function handleApi(e ){
     console.log(arr);
-    let url = "https://www.googleapis.com/customsearch/v1?key=AIzaSyB33h_6jQfJDyMrxDVaUT7ZHCtZKZFsNLE&cx=017576662512468239146:omuauf_lfve&q="+inputData;
+    let url = "https://www.googleapis.com/customsearch/v1?key=AIzaSyB33h_6jQfJDyMrxDVaUT7ZHCtZKZFsNLE&cx=017576662512468239146:omuauf_lfve&q=yoga";
     console.log("url "+ url );
-    axios
-            .get(
-                'https://developer.oculus.com/'
-            )
-            .then((response) => {
-                const posts = response.data;
-                arr.push({title:textin,message:"msg"});
-                setSearchount(arr);
-                console.log(response.data);
+    search(inputData)
+    // axios
+    //         .get(
+    //           url
+    //             // 'https://developer.oculus.com/'
+    //         )
+    //         .then((response) => {
+    //             const posts = response.data;
+    //             if(response.data.items!= undefined)
+    //             for(let i=0; i< response.data.items.length; i++ ){
+    //             arr.push({title:response.data.items[0].link,message:""});
+    //             }
+
+    //             setSearchount(arr);
+    //             console.log(response.data);
 
                 
-            });
+    //         });
             // summarizeURL("https://tesseract.in/");
+           
+          
+            // const testSummarization = async () => 
+            // {
+
+
+            //   const options = {
+            //     method: 'POST',
+            //     url: 'https://textanalysis-text-summarization.p.rapidapi.com/text-summarizer',
+            //     headers: {
+            //       'content-type': 'application/json',
+            //       'X-RapidAPI-Key': 'b68f14204emsh135461edf2e45adp157c17jsna98f77c626f6',
+            //       'X-RapidAPI-Host': 'textanalysis-text-summarization.p.rapidapi.com'
+            //     },
+            //     data: {
+            //       url: 'http://en.wikipedia.org/wiki/Automatic_summarization',
+            //       text: '',
+            //       sentnum: 8
+            //     }
+            //   };
+              
+            //   try {
+            //     const response = await axios.request(options);
+            //     console.log(response.data);
+            //   } catch (error) {
+            //     console.error(error);
+            //   }
+            // }
+        
+            // testSummarization();
 
   }
+  async function search(searchTerm) {
+    try {
+      const response = await axios.get("https://www.googleapis.com/customsearch/v1", {
+        params: {
+          key: "AIzaSyB33h_6jQfJDyMrxDVaUT7ZHCtZKZFsNLE",
+          cx: "320485d5d813d401c",
+          q: searchTerm,
+        },
+      });
+      if(response.data.items!= undefined)
+      for(let i=0; i< response.data.items.length; i++ ){
+      arr.push({title:response.data.items[i].link,message:""});
+      }
+
+      setSearchount(arr);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      // Handle errors appropriately, like displaying an error message to the user
+    }
+  }
+ 
+
   function textChange(e){
     inputData = e.target.value;
     console.log("input data "+ inputData);
