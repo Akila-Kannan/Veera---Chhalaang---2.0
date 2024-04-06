@@ -5,29 +5,79 @@ import TextField from '@mui/material/TextField';
 import { GlobalStyles, createTheme, ThemeProvider } from '@mui/material';
 import axios from 'axios';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+const { pipeline } = require('@xenova/transformers');
+// const parse = require('url-parse');
+
+async function summarizeURL(url) { 
+    try {
+        const summarizationPipeline =await pipeline('summarization', 'Xenova/distilbart-cnn-6-6');// 
+        //  const summarizationPipeline =await.pipeline({
+        //     model: "t5-small",
+        //     task: "summarization",
+        // });
+        const text = "The tower is 324 metres (1,063 ft) tall, about the same height as an 81-storey building, "+
+        "and the tallest structure in Paris. Its base is square, measuring 125 metres (410 ft) on each side. " +
+        "During its construction, the Eiffel Tower surpassed the Washington Monument to become the tallest " +
+        "man-made structure in the world, a title it held for 41 years until the Chrysler Building in New " +
+        "York City was finished in 1930. It was the first structure to reach a height of 300 metres. Due to " +
+        "the addition of a broadcasting aerial at the top of the tower in 1957, it is now taller than the " +
+        "Chrysler Building by 5.2 metres (17 ft). Excluding transmitters, the Eiffel Tower is the second " +
+        "tallest free-standing structure in France after the Millau Viaduct.";
+
+// const text ="my name is Akila ";
+
+        // text.replace(/[^a-zA-Z ]/g, "") 
+
+
+
+        // const result = await summarizationPipeline("http://tesseract.in");
+       const result =  await summarizationPipeline(text, {
+          max_new_tokens: 100,
+        });
+        console.log("summarize",result);
+
+        // console.log(result);
+        // return result;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+const url = 'YOUR_URL';
 function App() {
   let arr =[];
- 
+ let inputData;
   const[searchCount,setSearchount] = useState([{title: "your search", message: ""}]);
   const[textin, setInputText] = useState("");
   function handleApi(e ){
     console.log(arr);
+    let url = "https://www.googleapis.com/customsearch/v1?key=AIzaSyB33h_6jQfJDyMrxDVaUT7ZHCtZKZFsNLE&cx=017576662512468239146:omuauf_lfve&q="+inputData;
+    console.log("url "+ url );
     axios
             .get(
-                `https://jsonplaceholder.typicode.com/posts`
+                'https://developer.oculus.com/'
             )
             .then((response) => {
                 const posts = response.data;
                 arr.push({title:textin,message:"msg"});
                 setSearchount(arr);
-   
+                console.log(response.data);
+
                 
             });
+            // summarizeURL("https://tesseract.in/");
+
   }
   function textChange(e){
+    inputData = e.target.value;
+    console.log("input data "+ inputData);
     setInputText(e.target.value);
   }
+  useEffect(() => {
+    // Side effect code
+    inputData = textin;
+  }, [textin]);
   return (
     <div className="App">
    
